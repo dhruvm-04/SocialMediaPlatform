@@ -72,9 +72,3 @@ Admin at http://127.0.0.1:8000/admin/
 - If `.env` has `DB_ENGINE=mysql`, Django uses MySQL via PyMySQL; otherwise it falls back to SQLite (file path in `DB_NAME`).
 - On Windows, PyMySQL avoids the need for compiling `mysqlclient`.
 - The minimal UI is Bootstrap-based and intentionally simple.
-
-## Next steps
-- Pagination and search
-- Friend request notifications and unread counts
-- Image uploads for posts and avatars
-- Better authorization and privacy controls
