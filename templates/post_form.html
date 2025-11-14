@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{% if post %}Edit{% else %}Create{% endif %} Post</h2>
+<form method="post">
+  {% csrf_token %}
+  <textarea name="content" class="form-control" rows="5">{{ post.content }}</textarea>
+  <button class="btn btn-primary mt-2">Save</button>
+</form>
+{% endblock %}

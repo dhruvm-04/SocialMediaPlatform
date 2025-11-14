@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Feed</h2>
+{% if empty_feed %}
+  <div class="alert alert-info">You have no friend posts yet. Showing latest posts from everyone.</div>
+{% endif %}
+{% if user.is_authenticated %}
+<div class="mb-3">
+  <form method="post" action="{% url 'post_create' %}">
+    {% csrf_token %}
+    <textarea name="content" class="form-control" placeholder="Share something..."></textarea>
+    <button class="btn btn-primary mt-2">Post</button>
+  </form>
+</div>
+{% else %}
+  <div class="alert alert-secondary">Log in to create posts, like, and comment. Public feed is shown below.</div>
+{% endif %}
+{% for post in posts %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title"><a href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a></h5>
+      <p class="card-text">{{ post.content|linebreaks }}</p>
+      <p class="text-muted">{{ post.created_at }}</p>
+      <form method="post" action="{% url 'post_like_toggle' post.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button class="btn btn-sm btn-outline-primary">Like ({{ post.likes.count }})</button>
+      </form>
+      {% if post.user == user %}
+        <a href="{% url 'post_edit' post.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <form method="post" action="{% url 'post_delete' post.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      {% endif %}
+      <div class="mt-2">
+        <strong>Comments:</strong>
+        {% for comment in post.comments.all %}
+          <div class="border rounded p-2 my-1">
+            <b>{{ comment.user.username }}</b>: {{ comment.content }}
+            {% if comment.user == user or post.user == user %}
+            <form method="post" action="{% url 'comment_delete' comment.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-link text-danger">x</button>
+            </form>
+            {% endif %}
+          </div>
+        {% empty %}
+          <div class="text-muted">No comments yet.</div>
+        {% endfor %}
+        <form method="post" action="{% url 'comment_add' post.id %}" class="mt-2">
+          {% csrf_token %}
+          <input name="content" class="form-control" placeholder="Add a comment" />
+        </form>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <p>No posts yet.</p>
+{% endfor %}
+{% endblock %}
