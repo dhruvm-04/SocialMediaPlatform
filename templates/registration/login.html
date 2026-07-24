@@ -1,10 +1,27 @@
 {% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block main_class %}hero-main{% endblock %}
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button class="btn btn-primary">Login</button>
-</form>
-<p class="mt-2">No account? <a href="{% url 'register' %}">Register</a></p>
+<section class="center-screen">
+  <div class="center-box">
+    <h1 class="hero-name">LOG IN</h1>
+    <p class="hero-tagline">Welcome back <span class="sep">·</span><span class="red">Pick up where you left off</span></p>
+
+    <div class="fn-bento cols-1">
+      <div class="fn-panel">
+        <div class="section-label small">
+          <span class="num">[01]</span><span class="sep">/</span><span class="name">Credentials</span>
+          <span class="line"></span><span class="meta">auth/login</span>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button class="btn btn-primary full-width">Log In</button>
+        </form>
+      </div>
+    </div>
+
+    <p class="text-muted" style="text-align:center; margin-top:1rem;">No account? <a href="{% url 'register' %}" style="color:var(--red); text-decoration:underline;">Register</a></p>
+  </div>
+</section>
 {% endblock %}

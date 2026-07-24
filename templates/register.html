@@ -1,9 +1,27 @@
 {% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block main_class %}hero-main{% endblock %}
 {% block content %}
-<h2>Register</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button class="btn btn-primary">Register</button>
-</form>
+<section class="center-screen">
+  <div class="center-box">
+    <h1 class="hero-name">SIGN UP</h1>
+    <p class="hero-tagline">New here? <span class="sep">·</span><span class="red">Create an account</span></p>
+
+    <div class="fn-bento cols-1">
+      <div class="fn-panel">
+        <div class="section-label small">
+          <span class="num">[01]</span><span class="sep">/</span><span class="name">New Account</span>
+          <span class="line"></span><span class="meta">auth/register</span>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button class="btn btn-primary full-width">Create Account</button>
+        </form>
+      </div>
+    </div>
+
+    <p class="text-muted" style="text-align:center; margin-top:1rem;">Already have an account? <a href="{% url 'login' %}" style="color:var(--red); text-decoration:underline;">Log In</a></p>
+  </div>
+</section>
 {% endblock %}

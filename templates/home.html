@@ -1,60 +1,103 @@
 {% extends 'base.html' %}
+{% block title %}Feed{% endblock %}
+{% block main_class %}hero-main{% endblock %}
 {% block content %}
-<h2>Feed</h2>
-{% if empty_feed %}
-  <div class="alert alert-info">You have no friend posts yet. Showing latest posts from everyone.</div>
-{% endif %}
-{% if user.is_authenticated %}
-<div class="mb-3">
-  <form method="post" action="{% url 'post_create' %}">
-    {% csrf_token %}
-    <textarea name="content" class="form-control" placeholder="Share something..."></textarea>
-    <button class="btn btn-primary mt-2">Post</button>
-  </form>
-</div>
-{% else %}
-  <div class="alert alert-secondary">Log in to create posts, like, and comment. Public feed is shown below.</div>
-{% endif %}
-{% for post in posts %}
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title"><a href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a></h5>
-      <p class="card-text">{{ post.content|linebreaks }}</p>
-      <p class="text-muted">{{ post.created_at }}</p>
-      <form method="post" action="{% url 'post_like_toggle' post.id %}" style="display:inline;">
-        {% csrf_token %}
-        <button class="btn btn-sm btn-outline-primary">Like ({{ post.likes.count }})</button>
-      </form>
-      {% if post.user == user %}
-        <a href="{% url 'post_edit' post.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-        <form method="post" action="{% url 'post_delete' post.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button class="btn btn-sm btn-outline-danger">Delete</button>
-        </form>
-      {% endif %}
-      <div class="mt-2">
-        <strong>Comments:</strong>
-        {% for comment in post.comments.all %}
-          <div class="border rounded p-2 my-1">
-            <b>{{ comment.user.username }}</b>: {{ comment.content }}
-            {% if comment.user == user or post.user == user %}
-            <form method="post" action="{% url 'comment_delete' comment.id %}" style="display:inline;">
-              {% csrf_token %}
-              <button class="btn btn-sm btn-link text-danger">x</button>
-            </form>
-            {% endif %}
-          </div>
-        {% empty %}
-          <div class="text-muted">No comments yet.</div>
-        {% endfor %}
-        <form method="post" action="{% url 'comment_add' post.id %}" class="mt-2">
-          {% csrf_token %}
-          <input name="content" class="form-control" placeholder="Add a comment" />
-        </form>
+<section class="hero-screen">
+  <div class="hero-grid">
+
+    <div class="hero-top">
+      <div class="hero-title-block">
+        <h1 class="hero-name">FEED</h1>
+        <p class="hero-tagline">
+          Posts <span class="sep">·</span> Likes <span class="sep">·</span>Comments
+        </p>
+      </div>
+      <div class="info-strip">
+        <!-- <div class="info-cell">
+          <div class="info-key">// Order</div>
+          <div class="info-val">Newest first</div>
+        </div> -->
+        <div class="info-cell">
+          <div class="info-key">// Posts</div>
+          <div class="info-val">{{ posts|length }}</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-key">// You</div>
+          <div class="info-val"><span class="red-dot"></span>{% if user.is_authenticated %}@{{ user.username }}{% else %}guest{% endif %}</div>
+        </div>
       </div>
     </div>
+
+    <div class="fn-bento cols-1-stack">
+
+      <div class="fn-panel" id="new-post">
+        <div class="section-label small">
+          <span class="num">[01]</span><span class="sep">/</span><span class="name">New Post</span>
+          <span class="line"></span><span class="meta">post/create</span>
+        </div>
+        {% if user.is_authenticated %}
+          <form method="post" action="{% url 'post_create' %}">
+            {% csrf_token %}
+            {{ post_form.content }}
+            <button class="btn btn-primary full-width">Post</button>
+          </form>
+        {% else %}
+          <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+            <p class="text-muted" style="margin:0;">Log in to post, like, and comment.</p>
+            <a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="fn-panel" id="feed-list">
+        <div class="section-label small">
+          <span class="num">[02]</span><span class="sep">/</span><span class="name">Latest</span>
+          <span class="line"></span><span class="meta">global feed</span>
+        </div>
+        <ul class="scroll-list">
+          {% for post in posts %}
+            <li class="feed-item">
+              <div class="feed-item-head">
+                <a href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a>
+                <span class="feed-item-time">{{ post.created_at|timesince }} ago</span>
+              </div>
+              <p>{{ post.content|linebreaksbr }}</p>
+
+              {% if user.is_authenticated %}
+              <div class="feed-item-actions">
+                <form method="post" action="{% url 'post_like_toggle' post.id %}">
+                  {% csrf_token %}
+                  <button class="btn btn-sm">{% if user in post.likes.all %}Unlike{% else %}Like{% endif %} ({{ post.likes.count }})</button>
+                </form>
+                {% if post.user == user %}
+                  <a href="{% url 'post_edit' post.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                  <form method="post" action="{% url 'post_delete' post.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                  </form>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              <div class="feed-item-comments">
+                {% for comment in post.comments.all %}
+                  <div class="comment-box"><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</div>
+                {% endfor %}
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'comment_add' post.id %}" style="margin-top:0.5rem;">
+                  {% csrf_token %}
+                  {{ comment_form.content }}
+                </form>
+                {% endif %}
+              </div>
+            </li>
+          {% empty %}
+            <li class="text-muted">No posts yet. Be the first to share something.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
   </div>
-{% empty %}
-  <p>No posts yet.</p>
-{% endfor %}
+</section>
 {% endblock %}
