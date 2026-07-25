@@ -1,0 +1,53 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Django/Project files
+.env
+.env.*
+*.log
+local_settings.py
+
+# Databases (we use MySQL; keep SQLite out)
+db.sqlite3
+
+# Static/media build output
+staticfiles/
+media/
+
+# Test/coverage tools
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.pytype/
+.cache/
+
+# Packaging
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.swp
+*.swo

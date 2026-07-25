@@ -72,3 +72,17 @@ ORDER BY c.TABLE_NAME, c.ORDINAL_POSITION;
 -- UNION ALL SELECT 'social_like', COUNT(*) FROM social_like
 -- UNION ALL SELECT 'social_comment', COUNT(*) FROM social_comment
 -- UNION ALL SELECT 'social_notification', COUNT(*) FROM social_notification;
+ ESCOD
+-- DESCRIBE social_like;
+-- DESCRIBE social_comment;
+-- DESCRIBE social_notification;
+-- DESCRIBE django_migrations;
+
+-- 8) Optional: quick counts after migrating/seeded
+-- SELECT 'social_user' AS table_name, COUNT(*) AS cnt FROM social_user
+-- UNION ALL SELECT 'social_profile', COUNT(*) FROM social_profile
+-- UNION ALL SELECT 'social_post', COUNT(*) FROM social_post
+-- UNION ALL SELECT 'social_friendship', COUNT(*) FROM social_friendship
+-- UNION ALL SELECT 'social_like', COUNT(*) FROM social_like
+-- UNION ALL SELECT 'social_comment', COUNT(*) FROM social_comment
+-- UNION ALL SELECT 'social_notification', COUNT(*) FROM social_notification;

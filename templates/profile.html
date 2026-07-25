@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}{{ profile_user.username }}{% endblock %}
+{% block main_class %}hero-main{% endblock %}
+{% block content %}
+<section class="hero-screen">
+  <div class="hero-grid">
+
+    <div class="hero-top">
+      <div class="hero-title-block">
+        <h1 class="hero-name">{{ profile_user.username|upper }}</h1>
+        <p class="hero-tagline">
+          Joined {{ profile_user.date_joined|date:"M Y" }}
+          {% if profile_user != user %}<span class="sep">·</span><span class="red">{% if is_friend %}Friends{% else %}Not friends yet{% endif %}</span>{% endif %}
+        </p>
+      </div>
+      <div class="info-strip">
+        <div class="info-cell">
+          <div class="info-key">// Posts</div>
+          <div class="info-val">{{ posts|length }}</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-key">// Friends</div>
+          <div class="info-val">{{ friends|length }}</div>
+        </div>
+        {% if profile_user != user %}
+        <div class="info-cell">
+          <div class="info-key">// Action</div>
+          <div class="info-val">
+            {% if is_friend %}
+              <form method="post" action="{% url 'friend_remove' profile_user.username %}" style="display:inline;">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-danger">Remove Friend</button>
+              </form>
+            {% else %}
+              <form method="post" action="{% url 'friend_add' profile_user.username %}" style="display:inline;">
+                {% csrf_token %}
+                <button class="btn btn-sm">Add Friend</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="fn-bento cols-2">
+
+      <div class="fn-panel" id="friends">
+        <div class="section-label small">
+          <span class="num">[01]</span><span class="sep">/</span><span class="name">Friends</span>
+          <span class="line"></span><span class="meta">friends.list</span>
+        </div>
+        <ul class="scroll-list">
+          {% for f in friends %}
+            <li class="feed-item">
+              <a href="{% url 'profile' f.username %}">{{ f.username }}</a>
+            </li>
+          {% empty %}
+            <li class="text-muted">No friends yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="fn-panel" id="posts">
+        <div class="section-label small">
+          <span class="num">[02]</span><span class="sep">/</span><span class="name">Posts</span>
+          <span class="line"></span><span class="meta">by @{{ profile_user.username }}</span>
+        </div>
+        <ul class="scroll-list">
+          {% for post in posts %}
+            <li class="feed-item">
+              <div class="feed-item-head">
+                <span>{{ post.created_at|timesince }} ago</span>
+                <span class="feed-item-time">{{ post.likes.count }} like{{ post.likes.count|pluralize }}</span>
+              </div>
+              <p>{{ post.content|linebreaksbr }}</p>
+              <div class="feed-item-comments">
+                {% for c in post.comments.all %}
+                  <div class="comment-box"><strong>{{ c.user.username }}</strong>: {{ c.content }}</div>
+                {% empty %}
+                  <div class="text-muted">No comments yet.</div>
+                {% endfor %}
+              </div>
+            </li>
+          {% empty %}
+            <li class="text-muted">No posts yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
